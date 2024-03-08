@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>usuario</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+
+    <h1 class="text-center mt-4" style="background-color: rgba(27, 207, 10, 0.836);color:white;"> Bienvenido, <span id="nusuario" ></span> </h1>
+        
+        <div class="mt-5 mr-3 d-flex justify-content-around align-items-center flex-direction-row  ">
+        <button type="button" class="btn btn-outline-success " id="s_disponibles" style="margin-left: 10%;">Servicios disponibles</button>
+   
+        <button type="button" class="btn btn-outline-primary" id="s_recibidos">servicios registrados</button>
+        </div >
+        <div class="position-absolute top-0 end-0 mt-4">
+        <button class="btn btn-danger" type="button" id="cerrarsesion">cerrar sesion goda</button>
+        </div>
+        <div id="contenedor_servicios" style="display:none;width: 18rem; border: 2px solid;" class="card mx-4 mt-5 border border-success  bg-success-subtle text-success-emphasis">
+        <form id="formularioseleccionservicio">
+            <ul  id="lista_servicios"></ul>
+            <input type="datetime-local" id="fechahora" name="fechahora" class="mx-3">
+            <button type="submit" class="btn btn-success mt-3 mx-5 " > Guardar</button>
+        </form>
+    </div>
+    </div >
+    <div id="solicitu" class="d-flex flex-direction-row justify-content-center mt-5"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded',()=>{
+            const xhrUsuarioS = new XMLHttpRequest();
+            xhrUsuarioS.open('POST','obtener-usuario',true);
+            xhrUsuarioS.onreadystatechange=function(){
+                if(xhrUsuarioS.status===4){
+                    if(xhrUsuarioS.status===200){
+                        const usuario= JSON.parse(xhrUsuarioS.responseText)
+                        console.log(usuario)
+                        document.getElementById('nusuario').textContent=`Bienvenido: ${usuario.nombre_usuario}`;
+                    }
+                    else{
+                        console.log('yucas,salgase del sena')
+                    }
+                }
+            }
+            xhrUsuarioS.send();
+            
+            const contenedor_servicios=document.getElementById('contenedor_servicios');
+            const formularioseleccionservicio=document.getElementById('formularioseleccionservicio');
+            const s_disponibles=document.getElementById('s_disponibles');
+            const listaServicios=document.getElementById('lista_servicios')
+           
+           
+            s_disponibles.addEventListener('click',()=>{
+                const xhr=new XMLHttpRequest();
+                xhr.open('POST','/obtener-servicios-usuario',true);
+                xhr.setRequestHeader('Content-type','application/json');
+                xhr.onreadystatechange=function(){
+                    if(xhr.readyState === 4){
+                        if(xhr.status === 200){
+                            const data=JSON.parse(xhr.responseText);
+                           listaServicios.innerHTML=data.servicios.map(servicio=>`
+                           <div class="container">
+                           <div class="form-check">
+                            <label name='servicio' class="form-check-label" for='servicios-${servicio}'>
+                            <input name='servicio' class="form-check-input" type="radio" value="${servicio}" id='servicios-${servicio}'>
+                            ${servicio}
+                            </label>
+                          </div>
+                            </div>`).join('');
+                            contenedor_servicios.style.display="block";                                           
+                        }
+                        else{
+                            console.error('Error al obtener servicios de usuarios')
+                        }
+                    }
+                };
+                xhr.send()
+            })
+            formularioseleccionservicio.addEventListener('submit',async(event)=>{
+                event.preventDefault();
+                const servicioSelect=Array.from(formularioseleccionservicio.elements['servicio']).filter(radio=>radio.checked).map(radio=>radio.value);
+                const fechahora = formularioseleccionservicio.elements['fechahora'].value;
+                const xhrguardado = new XMLHttpRequest();
+                xhrguardado.open('POST','/guardar-servicios-usuario',true);
+                xhrguardado.setRequestHeader('Content-type','application/json');
+                xhrguardado.onreadystatechange=function(){
+                    if(xhrguardado.readyState === 4){
+                        if(xhrguardado.status === 200){
+                            alert("Datos guardados");
+                            window.Location.reload(false)
+                        }
+                        else{
+                            console.error('Error al guardar servicios del usuario')
+                        }
+                    }
+                };
+                xhrguardado.send(JSON.stringify({
+                servicios:servicioSelect,
+                fechahora:fechahora}))
+            })
+
+            const s_recibidos= document.getElementById('s_recibidos');
+            const divsoli=document.getElementById('solicitu')
+
+            s_recibidos.addEventListener('click',()=>{
+                const xhr=new XMLHttpRequest();
+                xhr.open('POST','/recibir-solicitudes',true);
+                xhr.setRequestHeader('Content-type','application/json');
+                xhr.onreadystatechange=function(){
+                    if(xhr.readyState === 4){
+                        if(xhr.status === 200){
+                            const data=JSON.parse(xhr.responseText);
+                            divsoli.innerHTML=data.solicitudes.map(reciData=>`
+                            <div class="card mx-2 mt-3 border border-primary bg-primary-subtle text-primary-emphasis" style="width: 18rem;">
+                                <div class="card-body">
+                                  <h3 class="card-title text-center">${reciData[1]}</h3>
+                                  <h5 class="card-text">ID: ${reciData[0]}</h5>
+                                  <h5  class="card-text">Fecha: ${new Date(reciData[2]).toLocaleString()}</h5>
+                                  <button id='botonel' name="botonel" data-id="${reciData[0]}" class="btn btn-danger mx-5">eliminar servicios</button>
+                                </div>
+                              </div>
+                            `).join('');
+
+                             const botonel = divsoli.querySelectorAll('#botonel')
+                              
+                             botonel.forEach(button=>{
+                                button.addEventListener('click', (event)=>{
+                                     event.preventDefault();
+                                     const id_sol=button.dataset.id;
+                                     console.log(id_sol)
+                                     const xhr = new XMLHttpRequest();
+                                    xhr.open('DELETE','/eliminar_solicitud',true);
+                                    xhr.setRequestHeader('Content-type','application/json');
+                                    xhr.onreadystatechange=function(){
+                                        if(xhr.readyState === 4){
+                                            if(xhr.status === 200){
+                                                console.log("Solicitud borrada")}
+                                                 window.location.reload(false); 
+                                        }else{
+                                            console.log("Error al borrar la solicitud.")
+                                        }}
+                                    xhr.send(JSON.stringify({id_sol}))
+                             })
+                                     //Arreglo clave valor.
+                              })
+                        }
+                        else{
+                            console.error('Error al obtener solicitudes')
+                        }
+                    }
+                };
+                xhr.send()
+            })
+
+            const cerrarsesion=document.getElementById('cerrarsesion')
+
+            cerrarsesion.addEventListener('click',()=>{
+                const xhrout= new XMLHttpRequest();
+                xhrout.open('POST','/log-out',true);
+                xhrout.onreadystatechange=function(){
+                    if(xhrout.readyState===4){
+                        if(xhrout.status===200){
+                            window.location.href='http://127.0.0.1:5500/vista/html/index.html'
+                        }
+                        else{
+                            console.error('error al cerrar sesion')
+                        }
+                    }
+                }
+                xhrout.send();
+            });
+            window.onload=function(){
+                window.history.forward();
+            };
+            window.onpageshow=
+            function(event){
+                if(event.persisted){
+                    window.location.reload();
+                }
+            }
+        })
+    </script>
+    
+    
+    
+    
+    
+    
+    
+    <!-- <script>
+        document.getElementById('nombreUsuario').innerText=getParameterByName('usuario');
+        function getParameterByName(name){
+            const url=new URL(window.location.href);
+            return url.searchParams.get(name)
+        }
+    </script> -->
+</body>
+</html>
