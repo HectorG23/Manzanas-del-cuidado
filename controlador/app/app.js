@@ -4,10 +4,9 @@ const mysql=require('mysql2/promise');
 const app=express();
 const path=require('path')
 const session=require('express-session');
-const { dir } = require('console');
-const res = require('express/lib/response');
-
 //configurar middleware
+
+
 app.use(bodyParser.urlencoded({ extended: true } ) );
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
@@ -196,6 +195,11 @@ app.post('/crear', async (req, res)=>{
     })
     
     //=========ADMIN========================//
+
+    app.get('/Admin',(req,res)=>{
+        res.sendFile(path.join(__dirname,`../../vista/html/Admin.html`))
+    })
+
     app.post('/registro-manzanas',async(req,res)=>{
         const {nombre_manzana,direccion}=req.body
         try {
@@ -206,7 +210,12 @@ app.post('/crear', async (req, res)=>{
             }
             else{
                 await input.execute('INSERT INTO manzanas(nombre_manzana,direccion) VALUES(?,?)',[nombre_manzana,direccion]);
-                res.status(201).send('<script>window.onload=function(){alert("Dato registrado");}</script>');
+                res.status(201).send(`<script>
+                window.onload=function(){
+                    alert("Dato registrado") 
+                    window.location.href="/Admin"
+                }
+                </script>`);
             }
         } catch (error) {
            console.error('error en el server',error);
@@ -241,24 +250,30 @@ app.post('/crear', async (req, res)=>{
             await input.execute('UPDATE manzanas SET nombre_manzana=?, direccion=? WHERE id_m=?',[nombre_manzana,direccion,id_m])
             res.status(200).send(`<script> 
             alert('manzana actualizada');
+            window.location.href="/Admin"
             </script>`)
         } catch (error) {
             console.error('Error en el server',error);
             res.status(500).send('error al registrar manzana');
         }
     })
-
+//---------------registro servicos-------------------------//
     app.post('/registro-service',async(req,res)=>{
+        const input=await mysql.createConnection(db)
         const{nombre_servicios,tipo}=req.body;
         try {
-            const input=await mysql.createConnection(db)
-            const indicad= await input.execute('SELECT * FROM servicios WHERE servicios.nombre_servicios = ? AND servicios.tipo = ?',[nombre_servicios,tipo]);
-            if(indicad.length === 0){
-                res.status(401).send('<script>window.onload=function(){alert("Servicio ya esta Registrado");}</script>');
+            const [indica]= await input.execute('SELECT * FROM servicios WHERE servicios.nombre_servicios = ? AND servicios.tipo = ?',[nombre_servicios,tipo]);
+            if(indica.length > 0){
+                res.status(401).send('<script>window.onload=function(){alert("Servicio ya esta Registrado"); window.location.href="/Admin"}</script>');
             }
             else{
                 await input.execute('INSERT INTO servicios(nombre_servicios,tipo) VALUES(?,?)',[nombre_servicios,tipo]);
-                res.status(201).send('<script>window.onload=function(){alert("Dato registrado");}</script>');
+                res.status(201).send(`<script>
+                window.onload=function(){
+                    alert("Dato registrado")
+                    window.location.href="/Admin"
+                    }
+                    </script>`);
             }
             await input.end();
         } catch (error) {
@@ -289,12 +304,15 @@ app.post('/crear', async (req, res)=>{
 
     app.post('/update-servicio', async (req, res)=>{
         const input = await mysql.createConnection(db)
-        const {nombre_servicios, tipo} = req.body;
-        
+        const {nombre_servicios, tipo, id_servicios} = req.body;
         try{
-            await input.execute('UPDATE servicios SET  nombre_servicios=? WHERE  tipo=?', [nombre_servicios,tipo])
+            await input.execute('UPDATE servicios SET nombre_servicios=?, tipo = ? WHERE ud_servicios = ?;', [nombre_servicios,tipo,id_servicios])
             res.status(200).send(`<script> 
-                    alert('Servicio actualizado');
+            window.onload=function(){
+                alert("Servicio Actualizado")
+                window.location.href="/Admin"
+                }
+
                     </script>`)
         }catch (error) { 
             //Capturamos el error.
@@ -308,13 +326,88 @@ app.post('/crear', async (req, res)=>{
         const input = await mysql.createConnection(db);
         try {
             await input.execute('DELETE FROM servicios WHERE ud_servicios = ?',[indicam]);
-            res.status(200).send(`<script>
-            alert('servicio eliminado) </script>`)
+            res.status(200).send('Servicio eliminado'); //Envía confirmación al html
+
         } catch (error) {
             console.error('error en el server', error)
             res.status(500).send('reinicie el server')
         }
     })
+//------------apartado usuario---------------------//
+    app.post('/registro-User', async (req,res)=>{
+        const input=await mysql.createConnection(db);
+        const [nombre_user,tipo_doc,documento,id_user]=req.body;
+        try{
+            const Indicar = await input.execute('SELECT * FROM usuarios WHERE usuarios.nombre_usuarios = ? AND usuarios.tipo_documento = ? AND usuarios.documento = ? AND id_usuarios',[nombre_user,tipo_doc,documento,id_user]);
+            if(Indicar.length === 0){
+                res.status(401).send('<script>window.onload=function(){alert("Servicio ya Registrado");}</script>');
+            }
+            else{
+                await input.execute('INSERT INTO usuarios(nombre_usuarios,tipo_documento,documento,id_usuarios) VALUES(?,?,?,?)',[nombre_user,tipo_doc,documento,id_usuer]);
+                res.status(201).send('<script>window.onload=function(){alert("Dato registrado");}</script>');
+            }
+           
+        await input.end();
+        }
+        catch(error){
+            console.error('Hubo un error con el servidor: ',error);
+            res.status(500).send('Erro en el regitrar Servicio');
+        }
+    })
+
+    app.post('/obtener-User', async (req,res)=>{
+        const input=await mysql.createConnection(db);
+        try{
+            const [indicar] = await input.execute('SELECT usuarios.id_usuarios, usuarios.nombre_usuarios, usuarios.tipo_documento, usuarios.documento, manzanas.nombre_manzana from usuarios INNER JOIN manzanas ON usuarios.id_m2=manzanas.id_m WHERE usuarios.id_m2=manzanas.id_m');
+            console.log(indicar)
+            res.json({
+                manzanasr: indicar.map(row =>([
+                row.id_usuarios,
+                row.nombre_usuarios,
+                row.tipo_documento,
+                row.documento,
+                row.nombre_manzana
+                ]))
+            })
+        await input.end();
+        }
+        catch(error){
+            console.error('Hubo un error con el servidor: ',error);
+            res.status(500).send('Erro en el regitrar Servicio');
+        }
+    })
+
+    app.post('/actualizar-user', async (req, res)=>{
+        const input = await mysql.createConnection(db)
+        const {tipo_documento, id_m2, id_usuarios} = req.body;
+        console.log(tipo_documento, id_m2, id_usuarios)
+        try{
+            await input.execute('UPDATE usuarios SET tipo_documento=?, id_m2= ? WHERE id_usuarios=?', [tipo_documento,id_m2,id_usuarios])
+            res.status(200).send(`<script>
+                    alert('Usuarios Actualizado');
+                    window.location.href="/Admin"
+                    </script>`)
+        }catch (error) { 
+            //Capturamos el error.
+            console.error('Error en el servidor', error)
+            res.status(500).send('Reinicie el servidor')
+        }
+    }) 
+
+    app.delete('/eliminar_User',async (req,res)=>{
+        const {indicado}=req.body;
+        const input=await mysql.createConnection(db);
+        try {
+            await input.execute('DELETE FROM usuarios WHERE documento = ?',[indicado])
+            console.log('usuario eliminado correctamente')
+            res.status(200).send(`oki`)
+        } catch (error) {
+            console.error('Error en el servidor', error)
+            res.status(500).send('reinicie el server') 
+        }
+    })
+
+
 
     app.post('/log-out',(req,res)=>{
         req.session.destroy((err)=>{

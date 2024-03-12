@@ -33,7 +33,7 @@
             const xhrUsuarioS = new XMLHttpRequest();
             xhrUsuarioS.open('POST','obtener-usuario',true);
             xhrUsuarioS.onreadystatechange=function(){
-                if(xhrUsuarioS.status===4){
+                if(xhrUsuarioS.readyState===4){
                     if(xhrUsuarioS.status===200){
                         const usuario= JSON.parse(xhrUsuarioS.responseText)
                         console.log(usuario)

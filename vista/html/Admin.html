@@ -21,6 +21,9 @@
          <button id="RegistrarMnz"  class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
           Registrar manzana
         </button> 
+        
+        <button id="RegistrarUser" class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">registrar y Editar usuarios
+        </button>
 
         <div class="position-absolute top-0 end-0 mt-4">
           <button class="btn btn-danger" type="button" id="cerrarsesion">cerrar sesion goda</button>
@@ -29,18 +32,14 @@
   </div>
   <!-----------------------------------EDITAR SERVICIOS------------------------------------------------------>
   <!-- Modal -->
-  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal fade " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Editar & Registrar Servicios</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form action="http://localhost:3000/Registro-Servicios" id="Registro_S" method="post">
+          <form action="http://localhost:3000/registro-service" id="Registro_S" method="post">
             <div>
               <label for="exampleFormControlInput1" class="form-label">Nombre del Servicio</label>
-              <input type="text" class="form-control" id="nombre_server" name="nombre_servicios" placeholder="Cocinar">
+              <input type="text" class="form-control" id="nombre_servicios" name="nombre_servicios" placeholder="Cocinar">
             </div>
             <div class="mb-3">
               <label for="exampleFormControlInput1" class="form-label">Tipo de servicio</label>
@@ -72,62 +71,97 @@
     </div>
   </div>
   <div id="FormDiv"></div>
+
   <!-----------------------------------------Seccion en donde se encuentra las manzans-------------------------->
-         <div style="min-height: 120px;">
-          <div class="collapse collapse-horizontal" id="collapseWidthExample">
-            <div class="card card-body" style="width: 300px;">
-            </div>
-          </div>
+         
+  <div style="min-height: 120px;">
+    <div class="collapse collapse-horizontal" id="collapseWidthExample">
+      <div class="card card-body" style="width: 300px;">
+      </div>
+    </div>
+  </div>
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasExampleLabel">Editar Manzanas</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <form action="http://localhost:3000/Registro-Manzanas" id="Registro_M" method="post">
+      <div class="mb-3">
+          <label for="formGroupExampleInput" class="form-label">Localidad Manzana</label>
+          <input type="text" class="form-control" id="nombre_manzana"  name="nombre_manzana" placeholder="Localidad Puente Aranda">
         </div>
-        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-          <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Editar Manzanas</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <div class="mb-3">
+          <label for="formGroupExampleInput2" class="form-label">Direccion Manzana</label>
+          <input type="text" class="form-control" id="direccion" name="direccion" placeholder="calle 34 # 45-78">
+          <button type="submit" name="EnviarRM" id="EnviarRM" value="Registar" class="btn btn-outline-info">Registrar</button>
+      </div>
+      </form>
+      <div> 
+        <table class="table" >
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Manzana</th>
+              <th scope="col">Dirreción</th>
+            </tr>
+          </thead>
+          <tbody id="EditarMnz">
+        </tbody>
+        </table>
+      </div>    
+    </div>
+            <!----------------------seccion usuarios  ----------------------------->
+
+              
+    <div class="offcanvas offcanvas-end w-100" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">registrar usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <form action="http://localhost:3000/obtener-User" id="Registro_S" method="post">
+          <div>
+            <label for="exampleFormControlInput1" class="form-label">Nombre del usuario</label>
+            <input type="text" class="form-control" id="nombre_s" name="nombre_s" placeholder="Cocinar">
           </div>
-          <form action="http://localhost:3000/Registro-Manzanas" id="Registro_M" method="post">
-            <div class="mb-3">
-                <label for="formGroupExampleInput" class="form-label">Localidad Manzana</label>
-                <input type="text" class="form-control" id="nombre_manzana"  name="nombre_manzana" placeholder="Localidad Puente Aranda">
-              </div>
-              <div class="mb-3">
-                <label for="formGroupExampleInput2" class="form-label">Direccion Manzana</label>
-                <input type="text" class="form-control" id="direccion" name="direccion" placeholder="calle 34 # 45-78">
-                <button type="submit" name="EnviarRM" id="EnviarRM" value="Registar" class="btn btn-outline-info">Registrar</button>
-            </div>
-            </form>
-            <div> 
-              <table class="table" >
-                <thead>
-                  <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Manzana</th>
-                    <th scope="col">Dirreción</th>
-                  </tr>
-                </thead>
-                <tbody id="EditarMnz">
-              </tbody>
-              </table>
-            </div>    
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Tipo de doc</label>
+            <input type="text" class="form-control" id="tipo_s" name="tipo_s" placeholder="Gastronomia">
           </div>
-        </div>
-   
+          <div class="mb-3">
+            <button type="submit" name="EnviarRM" id="EnviarRM" value="Registar" class="btn btn-outline-info">Registrar</button>
+          </div>
+        </form>
+      </div>
+      <div> 
+        <table class="table" >
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">TipoDoc</th>
+                <th scope="col">Documento</th>
+                <th scope="col">Manzana</th>
+                <th scope="col">Ajustes</th>
+              </tr>
+            </thead>
+            <tbody id="EditarUser">
+          </tbody>
+        </table>
+      </div>   
+    </div>
+ 
+              
 
 
 
 <!--Scriptionano-->
       <script>
         document.addEventListener('DOMContentLoaded',()=>{
-            /* const parms = new URLSearchParams(window.location.search);
-            const admin = parms.get('admin');
-            document.getElementById('administrador').textContent = admin; */
-
-                //Esete espacio es para poder registrar las manzanas 
-               /*  const Nombre_M = document.getElementById('Nombre_M');
- */
- const xhrUsuarioS = new XMLHttpRequest();
+        const xhrUsuarioS = new XMLHttpRequest();
             xhrUsuarioS.open('POST','/obtener-usuario', true);
             xhrUsuarioS.onreadystatechange=function(){
-                if(xhrUsuarioS.status===4){
+                if(xhrUsuarioS.readyState===4){
                     if(xhrUsuarioS.status===200){
                         const usuario = JSON.parse(xhrUsuarioS.responseText)
                         console.log(usuario)
@@ -165,7 +199,7 @@
                                 </button>
                                 <ul>
                                 <form action="http://localhost:3000/update-manzana" id="Registro_M" method="post">
-                                <input type="text" class="form-control" id="id_m" value="${indicador[0]}" name="id_m">
+                                <input type="text" class="form-control" id="id_m" value="${indicador[0]}" name="id_m" readonly>
                                 <div class="mb-3">
                                 <label for="formGroupExampleInput" class="form-label">Localidad Manzana</label>
                                 <input type="text" class="form-control" id="nombre_manzana" value="${indicador[1]}" name="nombre_manzana">
@@ -189,8 +223,8 @@
             })
 
             //Editar Servicios 
-              const EditarSer=document.getElementById('EditarSer');
-            const RegistrarSer=document.getElementById('RegistrarMnz');
+            const EditarSer=document.getElementById('EditarSer');
+            const RegistrarSer=document.getElementById('RegistrarSer');
             RegistrarSer.addEventListener('click',()=>{
                 const xhr=new XMLHttpRequest();
                 xhr.open('POST','/obtener-service',true);
@@ -199,67 +233,68 @@
                     if(xhr.readyState === 4){
                         if(xhr.status === 200){
                             const data=JSON.parse(xhr.responseText);
-                           EditarSer.innerHTML=data.manzanasr.map(indica=>`
+                            EditarSer.innerHTML=data.manzanasr.map(indica=>`
                             <tr>
+                              <td>${indica[0]}</td>
                               <td>${indica[1]}</td>
-                              <td>${indica[0]}</td>
                               <td>${indica[2]}</td>
-                              <td>${indica[0]}</td>
                               <td>
                                 <div >
                                 <button class="btn btn-secondary" type="button">
                                 Editar Manzana
                                 </button>
                                 <ul>
-                                <form action="http://localhost:3000/update-servicio" id="Registro_M" method="post">
-                                <input type="text" class="form-control" id="id_m" value="${indica[1]}" name="id_m">
+                                <form action="http://localhost:3000/update-servicio" id="Registro_s" method="post">
+                                <input type="text" class="form-control" id="id_servicios" value="${indica[0]}" name="id_servicios" readonly>
                                 <div class="mb-3">
-                                <label class="form-label">Localidad Manzana</label>
-                                <input type="text" class="form-control" id="Nombre_M" value="${indica[0]}" name="Nombre_M">
+                                <label class="form-label">nombre servicio</label>
+                                <input type="text" class="form-control" id="nombre_servicios" value="${indica[1]}" name="nombre_servicios">
                                 </div>
                                 <div class="mb-3">
-                                <label for="formGroupExampleInput2" class="form-label">Direccion Manzana</label>
-                                <input type="text" class="form-control" id="direccion" name="direccion" value="${new Date(indica[2]).toLocaleString()}">
+                                <label for="formGroupExampleInput2" class="form-label">tipo servicio</label>
+                                <input type="text" class="form-control" id="tipo" name="tipo" value="${indica[2]}">
                                 </div>
-                                <div class="mb-4">
-                                <label for="formGroupExampleInput2" class="form-label">Direccion Manzana</label>
-                                <input type="text" class="form-control" id="direccion" name="direccion" value="${indica[0]}">
-                                </div>
-                                <button type="submit" name="EnviarSER" id="EnviarSER" value="Registar" class="btn btn-outline-info">Registrar</button>
+                                <button name="deleteser" data-id="${indica[0]}" id="deleteser" value="Registar" class="btn btn-outline-danger">eliminar</button> 
+                                <button type="submit" name="EnviarSER" id="EnviarSER" value="Registar" class="btn btn-outline-info">editar</
+                                button>
                                 </form>
                                 </ul>        
                                 </div>
                                 </td>
                                 </tr>`).join('') 
-                        }else{
-                            console.error('Error al obtener manzanas')
-                        }
-                    }
-                };
-                xhr.send()
+                                
+                                const deleteser= EditarSer.querySelectorAll('#deleteser')
+                                  deleteser.forEach(button =>{
+                                  button.addEventListener('click', (event)=>{
+                                    event.preventDefault();
+                                    const indicam = button.dataset.id;
+                                    console.log(indicam)
+                                    const xhr= new XMLHttpRequest();
+                                    xhr.open('DELETE','/delete-servicio',true)
+                                    xhr.setRequestHeader('Content-type','application/json')
+                                    xhr.onreadystatechange=function(){
+                                      if(xhr.readyState===4){
+                                        if(xhr.status===200){
+                                          alert('solicitud eliminada')
+                                          window.location.reload(false)
+                                        }else{
+                                          alert('Solicitud no puede ser eliminada')
+                                          window.location.reload(false)
+                                        }}
+
+                                      }
+                                      xhr.send(JSON.stringify({indicam}))
+                                  })
+                                })
+                              }else{
+                                console.error('Error al obtener manzanas')
+                              }
+                            }
+                        };
+                        xhr.send()
             })  
 
-            const deleteser=EditarSer.querySelectorAll('#deleteser')
-            deleteser.forEach(button =>{
-              button.addEventListener('click', (event)=>{
-                event.preventDefault();
-                const indicam=button.dataset.id;
-                console.log(indicam)
-                const xhr=XMLHttpRequest();
-                xhr.open('DELETE','/delete-servicio',true)
-                xhr.setRequestHeader('content-type','aplication/json')
-                xhr.onreadystatechange=function(){
-                  if(xhr.readystate===4){
-                    if(xhr.status===200){
-                      console.log('solicitud eliminada')
-                      window.location.reload(false)
-                    }else{
-                      console.log('error al borrar su solicitud')
-                    }}
-                    xhr.send(JSON.stringify({indicam}))
-                }
-              })
-            })
+           
             
             const cerrarsesion=document.getElementById('cerrarsesion')
     cerrarsesion.addEventListener('click',()=>{
@@ -286,6 +321,101 @@ function(event){
         window.location.reload();
     }
 }
+
+
+const EditarUser=document.getElementById('EditarUser');
+            const RegistrarUser=document.getElementById('RegistrarUser'); 
+
+            RegistrarUser.addEventListener('click',()=>{
+                const xhr=new XMLHttpRequest();
+                xhr.open('POST','/obtener-User',true);
+                xhr.setRequestHeader('Content-type','application/json');
+                xhr.onreadystatechange=function(){
+                    if(xhr.readyState === 4){
+                        if(xhr.status === 200){
+                            const data=JSON.parse(xhr.responseText);
+                            EditarUser.innerHTML=data.manzanasr.map(indicar=>`
+                            <tr>
+                              <td>${indicar[0]}</td>
+                              <td>${indicar[1]}</td>
+                              <td>${indicar[2]}</td>
+                              <td>${indicar[3]}</td>
+                              <td>${indicar[4]}</td>
+                              <td>
+                                <div class="dropdown mt-3">
+                                <button id="FormEdit" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                Editar User
+                                </button> 
+                                <button data-id="${indicar[3]}" id="EliminiarUser" class="btn btn-outline-info">eliminar</button> 
+                                <ul class="dropdown-menu">
+                                  <form action="http://localhost:3000/actualizar-user" method="post">
+  <div class="mb-3">
+    <label for="id_usuarios" class="form-label">ID Usuario</label>
+    <input type="text" class="form-control" id="id_usuarios" name="id_usuarios" value="${indicar[0]}" readonly>
+  </div>
+  <div class="mb-3">
+    <label for="nombre_usuarios" class="form-label">Nombre</label>
+    <input type="text" class="form-control" id="nombre_usuarios" name="nombre_usuarios" value="${indicar[1]}" readonly>
+  </div>
+  <div class="mb-3">
+    <label for="tipo_documento" class="form-label">Tipo Doc</label>
+    <select name="tipo_documento" class="input" id="tipo_documento">
+      <option value="TI"selected >TI</option>
+      <option value="CC" >CC</option>
+    </select>
+  </div>
+  <div class="mb-4">
+    <label for="documento" class="form-label">Doc</label>
+    <input type="text" class="form-control" id="documento" name="documento" value="${indicar[3]}" readonly>
+  </div>
+  <div class="mb-4">
+    <label for="id_m2" class="form-label">Manzana</label>
+    <select name="id_m2" class="input" id="id_m2">
+      <option value="1">chapi</option>
+      <option value="2">bosa</option>
+      <option value="3">suba</option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-success" value="enviar">
+    Editar
+    </button>
+</form>
+                                </ul>        
+                                </div>
+                                </td>
+                                </tr>`).join('') 
+
+                                const EliminiarUser = EditarUser.querySelectorAll('#EliminiarUser')
+                                EliminiarUser.forEach(button =>{
+                                button.addEventListener('click', (event)=>{
+                                event.preventDefault();
+                                const indicado = button.dataset.id;
+                                console.log(indicado)
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('DELETE','/eliminar_User',true)
+                                xhr.setRequestHeader('Content-type','application/json')
+                                xhr.onreadystatechange=function(){
+                                    if(xhr.readyState===4){
+                                        if(xhr.status===200){
+                                            alert("Usuario Eliminado")
+                                            window.location.reload(false)}
+                                    }else{
+                                      alert("Usuario tiene solicitudes pendientes")
+                                            window.location.reload(false)
+                                    }}
+                                    xhr.send(JSON.stringify({indicado}))
+                                });
+                                    
+                            })
+                          
+                        }else{
+                            console.error('Error al obtener servicios')
+                        }
+                    }
+                };
+                xhr.send()
+            })
+
 
     });
     </script>
